@@ -4,23 +4,17 @@ services:
   sio.redis:
     image: "redis:alpine"    
     container_name: sio.redis
-    networks:
-      - sio.network
   sio.sql.projections:
     image: "microsoft/mssql-server-linux"
     container_name: sio.sql.projections
-    networks:
-      - sio.network
   sio.sql.store:
     image: "microsoft/mssql-server-linux"
     container_name: sio.sql.store
-    networks:
-      - sio.network
   sio.storage:
     image: "mcr.microsoft.com/azure-storage/azurite"
     container_name: sio.storage
-    networks:
-      - sio.network
-networks:    
-  sio.network:
-    name: sio.network
+networks:
+  default:
+    external:
+        name: sio.network
+  
