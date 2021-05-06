@@ -13,6 +13,9 @@ services:
   sio.storage:
     image: "mcr.microsoft.com/azure-storage/azurite"
     container_name: sio.storage
+  sio.rabbitmq:
+    image: "rabbitmq:3-management-alpine"
+    container_name: sio.rabbitmq
 networks:
   default:
     external:

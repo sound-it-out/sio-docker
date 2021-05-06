@@ -1,1 +1,1 @@
-docker network create sio.network; docker-compose up
+docker network create sio.network; docker-compose up -d
