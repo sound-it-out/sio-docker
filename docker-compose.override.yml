@@ -1,14 +1,6 @@
-version: '3.4'
+version: "3.4"
 
 services:
-  sio.sql.projections:
-    environment:
-      SA_PASSWORD: "1qaz-pl,"
-      ACCEPT_EULA: "Y"
-    ports:
-      - "1444:1433"
-    volumes:
-      - /var/opt/mssql/data
   sio.sql.store:
     environment:
       SA_PASSWORD: "1qaz-pl,"
