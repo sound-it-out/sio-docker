@@ -1,0 +1,19 @@
+version: "3.4"
+
+services:
+  sio.redis:
+    image: "redis:alpine"
+    container_name: sio.redis
+  sio.sql.store:
+    image: "microsoft/mssql-server-linux"
+    container_name: sio.sql.store
+  sio.storage:
+    image: "mcr.microsoft.com/azure-storage/azurite"
+    container_name: sio.storage
+  sio.rabbitmq:
+    image: "rabbitmq:3-management-alpine"
+    container_name: sio.rabbitmq
+networks:
+  default:
+    external:
+      name: sio.network

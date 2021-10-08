@@ -1,0 +1,17 @@
+version: "3.4"
+
+services:
+  sio.sql.store:
+    environment:
+      SA_PASSWORD: "1qaz-pl,"
+      ACCEPT_EULA: "Y"
+    ports:
+      - "1445:1433"
+    volumes:
+      - /var/opt/mssql/data
+  sio.storage:
+    ports:
+      - "10000:10000"
+      - "10001:10001"
+    volumes:
+      - /var/opt/azurite/data
