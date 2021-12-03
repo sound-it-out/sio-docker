@@ -5,7 +5,7 @@ services:
     image: "redis:alpine"
     container_name: sio.redis
   sio.sql.store:
-    image: "microsoft/mssql-server-linux"
+    image: "mcr.microsoft.com/mssql/server:2019-latest"
     container_name: sio.sql.store
   sio.storage:
     image: "mcr.microsoft.com/azure-storage/azurite"
