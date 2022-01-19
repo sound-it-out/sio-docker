@@ -1,5 +1,6 @@
 param(
     [switch] $cleanAll,
+    [switch] $clearData,
     [switch] $clean,
     [switch] $reBuild,
     [switch] $buildShared,
@@ -9,7 +10,8 @@ param(
     [switch] $buildEventNotifier,
     [switch] $buildIdentity,
     [switch] $buildApi,
-    [switch] $buildTranslationOptionImporter
+    [switch] $buildTranslationOptionImporter,
+    [switch] $buildGoogleSynthesizer
 )
 
 function Clean-Conatiners {
@@ -25,6 +27,7 @@ function Clean-Conatiners {
     
 };
 
+$clearData = $clearData -or $cleanAll;
 $reBuild = $reBuild -or $cleanAll;
 
 $buildShared = $buildShared -or $reBuild;
@@ -35,16 +38,20 @@ $buildEventNotifier = $buildEventNotifier -or $reBuild;
 $buildIdentity = $buildIdentity -or $reBuild;
 $buildApi = $buildApi -or $reBuild;
 $buildTranslationOptionImporter = $buildTranslationOptionImporter -or $reBuild;
+$buildGoogleSynthesizer = $buildGoogleSynthesizer -or $reBuild;
 
-if($cleanAll) {
+if($clearData) {
     $containerIds = $(docker ps -a -q);
     if($containerIds) {
         Invoke-Expression "docker kill $containerIds";
         Invoke-Expression "docker rm $containerIds";        
     }
 
-    docker image prune -a -f
     docker volume prune -f
+}
+
+if($cleanAll) {
+    docker image prune -a -f    
     docker builder prune -a -f
 }
 
@@ -63,6 +70,7 @@ $translationOptionImporterArgs = "-f ""$PSScriptRoot/../sio-translation-option-i
 $eventNotifierArgs = "-f ""$PSScriptRoot/../sio-eventnotifier/docker-compose.yml"" -f ""$PSScriptRoot/../sio-eventnotifier/docker-compose.override.yml""";
 $frontArgs = "-f ""$PSScriptRoot/../sio-front/docker-compose.yml"" -f ""$PSScriptRoot/../sio-front/docker-compose.override.yml""";
 $mailerArgs = "-f ""$PSScriptRoot/../sio-mailer/docker-compose.yml"" -f ""$PSScriptRoot/../sio-mailer/docker-compose.override.yml""";
+$googleSynthesizerArgs = "-f ""$PSScriptRoot/../sio-google-synthesiser/docker-compose.yml"" -f ""$PSScriptRoot/../sio-google-synthesiser/docker-compose.override.yml""";
 
 $sharedConatinerRoot = "sio-shared";
 $mailerConatinerRoot = "sio-mailer";
@@ -72,6 +80,7 @@ $eventNotifierConatinerRoot = "sio-event-notifier";
 $identityConatinerRoot = "sio-identity";
 $apiConatinerRoot = "sio-api";
 $translationOptionImporterConatinerRoot = "sio-translation-option-importer";
+$googleSynthesizerContainerRoot = "sio-google-synthesiser";
 
 
 if ($buildShared) {
@@ -138,6 +147,14 @@ if ($buildTranslationOptionImporter) {
     Invoke-Expression "docker compose $translationOptionImporterArgs build --parallel"
 }
 
+if ($buildGoogleSynthesizer) {
+    if($clean) {
+        Clean-Conatiners -containerRoot $googleSynthesizerContainerRoot;
+    }
+
+    Invoke-Expression "docker compose $googleSynthesizerArgs build --parallel"
+}
+
 
 Invoke-Expression "docker compose $sharedArgs -p $sharedConatinerRoot up --no-deps -d --remove-orphans";
 Invoke-Expression "docker compose $eventPublisherArgs -p $eventPublisherConatinerRoot up --no-deps -d --remove-orphans";
@@ -147,3 +164,4 @@ Invoke-Expression "docker compose $identityArgs -p $identityConatinerRoot up --n
 Invoke-Expression "docker compose $apiArgs -p $apiConatinerRoot up --no-deps -d --remove-orphans";
 Invoke-Expression "docker compose $translationOptionImporterArgs -p $translationOptionImporterConatinerRoot up --no-deps -d --remove-orphans";
 Invoke-Expression "docker compose $frontArgs -p $frontConatinerRoot up --no-deps -d --remove-orphans";
+Invoke-Expression "docker compose $googleSynthesizerArgs -p $googleSynthesizerContainerRoot up --no-deps -d --remove-orphans";
